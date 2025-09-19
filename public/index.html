@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Athena Cognitive Desktop</title>
+	<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+	<header id="header">
+	  <div class="header-left">
+	    <div class="logo">Athena Desktop</div>
+	    <span class="env-badge">PROD</span>
+	    <span id="cust-badge" class="env-badge" title="Active customer ID">Customer: —</span>
+	  </div>
+	  <div class="header-center">
+			<!-- Case/Disposition controls hidden intentionally to simplify header UI
+			<div class="case-status-group">
+				<span class="case-label">Case:</span>
+				<select id="case-status" class="case-status">
+					<option value="open">Open</option>
+					<option value="pending">Pending</option>
+					<option value="resolved">Resolved</option>
+					<option value="escalated">Escalated</option>
+				</select>
+				<button id="case-update-btn" class="case-update-btn">Update</button>
+			</div>
+			<div class="disposition-group">
+				<span class="disposition-label">Disposition:</span>
+				<input id="disposition-notes" class="disposition-notes" type="text" placeholder="Add notes..." maxlength="120" />
+				<button id="disposition-save-btn" class="disposition-save-btn">Save</button>
+			</div>
+			-->
+				<div class="header-metrics" aria-label="Contact center key indicators">
+					<div class="metric-chip state-warn" title="Live queue depth">
+						<span class="metric-icon" aria-hidden="true">🗂️</span>
+						<div class="metric-body">
+							<span class="metric-label">Queue</span>
+							<span class="metric-value">12</span>
+						</div>
+					</div>
+					<div class="metric-chip state-neutral" title="Average Handle Time">
+						<span class="metric-icon" aria-hidden="true">⏱️</span>
+						<div class="metric-body">
+							<span class="metric-label">AHT</span>
+							<span class="metric-value">312s</span>
+						</div>
+					</div>
+					<div class="metric-chip state-good" title="Customer Satisfaction (last 90d)">
+						<span class="metric-icon" aria-hidden="true">💬</span>
+						<div class="metric-body">
+							<span class="metric-label">CSAT</span>
+							<span class="metric-value">86%</span>
+						</div>
+					</div>
+					<div class="metric-chip state-active" title="AI Assist status">
+						<span class="metric-icon" aria-hidden="true">🤖</span>
+						<div class="metric-body">
+							<span class="metric-label">AI Assist</span>
+							<span class="metric-value">On</span>
+						</div>
+					</div>
+				</div>
+	  </div>
+	  <div class="header-right">
+	    <div class="agent-profile">
+	      <span class="presence-badge presence-online" title="Online"></span>
+	      <img src="https://i.pravatar.cc/40?u=agent1" alt="Agent" class="avatar">
+	      <span id="agent-name">Alex Chen</span>
+	    </div>
+	    <button id="availability-btn" class="header-action" title="Availability">⏳</button>
+	    <button id="notif-btn" class="header-action" title="Notifications">🔔</button>
+	    <button id="theme-toggle" class="header-action" title="Toggle Theme">☾</button>
+	  </div>
+	</header>
+
+	<aside id="work-queue" class="panel">
+		<h3 class="widget-title">My Queue</h3>
+		<div id="queue-items" class="loading-block"></div>
+	</aside>
+
+	<aside id="customer-panel" class="panel">
+		<div id="customer-profile" class="widget">
+			<h3 class="widget-title">Customer Profile</h3>
+			<div class="loading-block"></div>
+		</div>
+		<div id="account-health" class="widget">
+			<h3 class="widget-title">AI Account Health</h3>
+			<div class="loading-block spinner-sm"></div>
+			<div class="health-content hidden">
+				<div class="radial-progress-widget"><div id="health-score-circle" class="progress-circle"><span id="health-score-value"></span></div><div><p id="health-status" class="metric-primary"></p><p id="health-reasons" class="metric-secondary"></p></div></div>
+			</div>
+		</div>
+	</aside>
+
+	<main id="conversation-panel" class="panel">
+		<!-- Service Pedia sits above the conversation and surfaces contextual knowledge -->
+		<div id="service-pedia" class="widget">
+			<h3 class="widget-title">ServicePedia</h3>
+			<div id="service-pedia-summary" class="service-pedia-summary loading-block"></div>
+			<div id="service-pedia-details" class="service-pedia-details hidden"></div>
+		</div>
+
+		<div id="chat-log" class="widget">
+			<h3 class="widget-title">Conversation</h3>
+			<div id="messages"></div>
+		</div>
+		<div id="composer-bar" class="composer-bar">
+			<textarea id="chat-input" rows="2" placeholder="Type a reply or open AI composer..."></textarea>
+			<button id="send-btn">Send</button>
+		</div>
+		<div id="response-grader-widget" class="widget compact hidden">
+			<h3 class="widget-title">Live Grader</h3>
+			<div class="grader-row"><span>Tone</span><div class="progress"><div id="grade-tone" class="progress-fill"></div></div></div>
+			<div class="grader-row"><span>Clarity</span><div class="progress"><div id="grade-clarity" class="progress-fill"></div></div></div>
+			<div class="grader-row"><span>Empathy</span><div class="progress"><div id="grade-empathy" class="progress-fill"></div></div></div>
+		</div>
+	</main>
+
+	<aside id="ai-panel" class="panel">
+		<div id="agent-network" class="widget sticky-top">
+			<h3 class="widget-title two-rows">
+				<div class="wt-row">
+					<span class="wt-title-text">Agent Network Actions</span>
+					<span class="wt-right">
+						<span class="branding-pill">
+							<img class="branding-logo" src="/images/cog-logo.jpeg" alt="Cognizant" />
+							<span class="branding-text">powered by <strong>Neuro® SAN</strong></span>
+						</span>
+					</span>
+				</div>
+				<div class="wt-row">
+					<span class="wt-left" style="display:flex; align-items:center; gap:6px;">
+						<label for="agent-provider" style="font-weight:700;">Orchestration Engine</label>
+						<select id="agent-provider" style="background:var(--bt-purple-light); color:var(--bt-purple); border:1px solid var(--bt-purple-light); border-radius:6px; padding:2px 6px;">
+							<option value="neurosan">Neuro‑San</option>
+							<option value="openai">OpenAI</option>
+						</select>
+					</span>
+					<span class="wt-right">
+						<button id="agent-refresh-anchor" class="refresh-btn" title="Re-plan new actions">Refresh</button>
+					</span>
+				</div>
+			</h3>
+			<div class="loading-block"></div>
+			<div id="agent-network-actions" class="prompt-list hidden"></div>
+			<div id="agent-network-results" class="hidden" style="margin-top:8px; font-size:.7rem;"></div>
+		</div>
+		<div id="nba-widget" class="widget">
+			<h3 class="widget-title">Next Best Action</h3>
+			<div class="loading-block"></div>
+			<p class="nba-text hidden"></p>
+			<button id="nba-compose-btn" class="hidden" data-intent="">Compose with AI</button>
+		</div>
+		<div id="cta-prompter" class="widget">
+			<h3 class="widget-title">Live AI Prompts</h3>
+			<div class="loading-block"></div>
+			<div id="cta-items-container" class="prompt-list hidden"></div>
+		</div>
+		<div id="ai-summary" class="widget">
+			<h3 class="widget-title">AI Live Summary</h3>
+			<div class="loading-block"></div>
+			<p class="summary-text hidden"></p>
+		</div>
+		<!-- Sentiment & Risk enriched widget -->
+		<div id="sentiment-risk" class="widget">
+			<h3 class="widget-title">Sentiment & Risk</h3>
+			<div class="sr-wrap">
+				<div class="sr-dial" id="sr-sentiment">
+					<div class="sr-dial-ring"><div class="sr-dial-center"><span id="sr-sentiment-label">—</span></div></div>
+					<div class="sr-chip-row">
+						<span class="sr-chip" id="sr-sentiment-chip">—</span>
+						<span class="sr-trend" id="sr-sentiment-trend" title="trend">→</span>
+					</div>
+				</div>
+				<div class="sr-dial" id="sr-risk">
+					<div class="sr-dial-ring"><div class="sr-dial-center"><span id="sr-risk-label">—</span></div></div>
+					<div class="sr-chip-row">
+						<span class="sr-chip" id="sr-risk-chip">—</span>
+						<span class="sr-trend" id="sr-risk-trend" title="trend">→</span>
+					</div>
+				</div>
+			</div>
+			<div class="sr-legend">Live analysis of customer tone and case risk</div>
+		</div>
+		<div id="resolution-predictor" class="widget">
+			<h3 class="widget-title">Resolution Predictor</h3>
+			<div class="loading-block"></div>
+			<div class="radial-progress-widget hidden"><div id="fcr-score-circle" class="progress-circle"><span id="fcr-value"></span></div><div><p id="fcr-label" class="metric-primary"></p><p id="fcr-notes" class="metric-secondary"></p></div></div>
+		</div>
+		<div id="kb-widget" class="widget">
+			<h3 class="widget-title">ServicePedia Knowledge Graph</h3>
+			<div class="loading-block"></div>
+			<div id="knowledge-graph" class="graph hidden"></div>
+		</div>
+	</aside>
+
+	<!-- AI Composer Modal -->
+	<div id="composer-modal" class="modal hidden">
+		<div class="composer-content">
+			<h3 class="widget-title">AI Composer Workbench</h3>
+			<div class="composer-toolbar">
+				<label for="composer-transform" class="toolbar-label">Transform:</label>
+				<select id="composer-transform" class="toolbar-select">
+					<option value="empathetic">Empathetic</option>
+					<option value="concise">Concise</option>
+					<option value="both" selected>Empathetic + Concise</option>
+				</select>
+				<button id="composer-transform-btn" class="toolbar-btn" title="Generate refined draft">Transform</button>
+			</div>
+			<div id="composer-textarea" class="composer-textarea" contenteditable="true"></div>
+			<div class="composer-source"><strong>Source:</strong> <span id="composer-source-title"></span></div>
+			<div class="composer-actions">
+				<div class="refine-tools subtle-hint">Use Transform to rewrite tone and structure.</div>
+				<div class="main-composer-actions">
+					<button class="cancel-btn">Cancel</button>
+					<button class="insert-btn">Insert to Chat</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="module" src="/js/main.js"></script>
+</body>
+</html>

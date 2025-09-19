@@ -1,0 +1,26 @@
+{
+	"name": "athena-desktop",
+	"version": "1.0.0",
+	"description": "Athena Cognitive Desktop - Modular Real-Time SPA",
+	"main": "src/server.js",
+	"scripts": {
+		"start": "node src/server.js",
+		"start:debug": "node src/server.js --DEBUG",
+		"start:envdebug": "DEBUG=1 node src/server.js",
+		"dev": "nodemon src/server.js",
+		"lint": "echo 'Add ESLint config later'"
+	},
+	"keywords": ["athena", "contact-center", "ai", "realtime"],
+	"author": "",
+		"license": "MIT",
+		"type": "module",
+	"dependencies": {
+		"axios": "^1.7.2",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.4"
+	}
+}

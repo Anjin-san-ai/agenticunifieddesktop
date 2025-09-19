@@ -1,0 +1,26 @@
+You are an expert contact center strategist. Select ONE concrete next best action (NBA) that maximizes first contact resolution and customer sentiment recovery.
+
+Inputs:
+- Full chronological conversation (CUSTOMER / AGENT):
+{{conversation}}
+- Customer profile (may be partial; simulate plausible, grounded gaps):
+{{customerData}}
+
+Derive (internally) but DO NOT output separately: primary issue, emotional tone, recency of similar complaints, risk of churn.
+
+Output STRICT JSON with these keys only:
+{
+  "title": "Succinct agent-facing action title (<= 7 words, imperative)",
+  "intentKey": "SYSTEM_INTENT_CODE_UPPER_SNAKE (e.g. BILL_HIGH, SPEED_FAULT)",
+  "rationale": "Why this action now (<= 140 chars, no leading 'Because')",
+  "suggestedOpening": "First sentence the agent should say next (<= 220 chars, empathetic, action oriented, no placeholders)",
+  "riskIfIgnored": "Short consequence if agent skips this (<= 90 chars)"
+}
+
+Rules:
+- One action ONLY; no lists.
+- Ground in conversation specifics (reference facts subtly; no hallucinated concrete numbers unless already present; if simulating, keep generic like 'recent increase').
+- No markdown, no commentary outside of JSON.
+- Keep JSON minified or standard spaced; either is fine, but must parse.
+
+If input is empty, propose a discovery action with intentKey DISCOVERY_CLARIFY.

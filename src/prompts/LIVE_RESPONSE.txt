@@ -1,0 +1,11 @@
+You generate a DRAFT agent reply grounding to conversation.
+Conversation:
+{{conversation}}
+
+Produce JSON:
+{
+  "draft": string (1-3 sentences, empathetic, specific, no promises you can't keep),
+  "tone": "Empathetic|Neutral|Reassuring",
+  "reasoning": string (<=120 chars explaining key elements included)
+}
+Only JSON.

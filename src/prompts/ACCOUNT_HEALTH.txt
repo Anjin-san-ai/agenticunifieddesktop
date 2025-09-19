@@ -1,0 +1,14 @@
+Analyze customer risk propensity from the conversation. Return JSON exactly as:
+{
+  "score": number (0-100),
+  "status": "Healthy|At Risk|Critical",
+  "reasons": ["..."]
+}
+
+Conversation:
+{{conversation}}
+
+Customer Data:
+{{customerData}}
+
+Important: If certain facts are missing, simulate grounded plausible values for score and reasons, but keep the response strictly JSON.

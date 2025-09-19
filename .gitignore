@@ -1,0 +1,53 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs
+logs
+*.log
+log
+*.pid
+*.seed
+*.pid.lock
+
+# Build output
+dist/
+build/
+.next/
+.nuxt/
+out/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Misc
+*.swp
+*.swo
+
+# If Python or notebooks ever appear, keep these ignored
+__pycache__/
+.ipynb_checkpoints/
+site/
+docs/_build/
+.cache/
+

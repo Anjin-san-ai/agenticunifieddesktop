@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athena Cognitive Desktop v2.3 - BT/EE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/athena.css" />
+</head>
+<body>
+    <!-- Header / Agent Logged-In Enhanced Widget -->
+    <header id="header" class="header-glass" role="banner">
+        <div class="header-left">
+            <div class="logo-cluster">
+                <div class="logo">Athena Desktop</div>
+                <div class="env-indicator" title="Environment">PROD</div>
+            </div>
+            <div class="header-search" role="search">
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input id="global-search" type="text" placeholder="Search knowledge, customers, actions..." aria-label="Global search" />
+            </div>
+        </div>
+        <div class="header-center" aria-label="Performance snapshot">
+            <div class="perf-capsule" id="perf-capsule">
+                <div class="metric-chip" data-metric="fcr">FCR <span id="stat-fcr">82%</span></div>
+                <div class="metric-chip" data-metric="csat">CSAT <span id="stat-csat">4.6</span></div>
+                <div class="metric-chip" data-metric="aht">AHT <span id="stat-aht">06:12</span></div>
+                <div class="metric-chip" data-metric="active">Active <span id="stat-active">1</span></div>
+            </div>
+        </div>
+        <div class="header-right agent-hub" aria-label="Agent session and controls">
+            <div class="agent-identity">
+                <div class="agent-avatar-wrapper" title="Click to change availability">
+                    <div class="avatar-ring pulse-online">
+                        <img src="https://i.pravatar.cc/60?u=agent1" alt="Agent Avatar" class="agent-avatar" />
+                    </div>
+                    <span class="presence-badge presence-online" id="presence-badge" aria-label="Online" title="Online"></span>
+                </div>
+                <div class="identity-text">
+                    <span class="agent-name" id="agent-name">Alex Chen</span>
+                    <span class="agent-role">Senior Care Specialist</span>
+                </div>
+            </div>
+            <div class="quick-actions" role="toolbar" aria-label="Quick actions">
+                <button class="qa-btn" id="qa-compose" title="Open AI Composer" aria-label="AI Composer">
+                    <span class="qa-icon">✦</span><span class="qa-label">Compose</span>
+                </button>
+                <button class="qa-btn" id="qa-knowledge" title="Knowledge Graph" aria-label="Knowledge">
+                    <span class="qa-icon">☰</span><span class="qa-label">Knowledge</span>
+                </button>
+                <button class="qa-btn" id="qa-settings" title="Preferences" aria-label="Settings">
+                    <span class="qa-icon">⚙</span><span class="qa-label">Prefs</span>
+                </button>
+            </div>
+            <div class="agent-actions enriched">
+                <div class="availability-wrapper">
+                    <button id="presence-toggle" class="ghost-btn presence-btn" aria-haspopup="true" aria-expanded="false">Online ▾</button>
+                    <div class="availability-menu hidden" role="menu" aria-label="Set availability">
+                        <button class="availability-option" data-state="online" role="menuitem">🟢 Online</button>
+                        <button class="availability-option" data-state="away" role="menuitem">🟡 Away</button>
+                        <button class="availability-option" data-state="offline" role="menuitem">⚫ Offline</button>
+                    </div>
+                </div>
+                <button id="open-kpi" class="ghost-btn" title="View detailed KPIs">KPIs</button>
+                <button id="theme-toggle" class="ghost-btn" title="Toggle theme">☾</button>
+                <button id="notif-btn" class="ghost-btn notif-btn" title="Notifications" aria-haspopup="true" aria-expanded="false" aria-controls="notif-menu">
+                    🔔<span class="notif-badge" id="notif-badge" aria-live="polite">3</span>
+                </button>
+                <div class="notif-menu hidden" id="notif-menu" role="menu" aria-label="Notifications">
+                    <div class="notif-header">Notifications</div>
+                    <div class="notif-items" id="notif-items"></div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="agent-clock" id="agent-clock" title="Local time"></div>
+                <div class="shift-timer" id="shift-timer" title="Time since shift start">00:00:00</div>
+            </div>
+        </div>
+        <div class="header-accent-bar" aria-hidden="true"></div>
+    </header>
+
+    <!-- Panel 1: Queue -->
+    <aside id="work-queue" class="panel"><h3 class="widget-title">My Queue (1)</h3><div class="chat-item active"><h4>Sarah Jenkins</h4><p>...bill is way higher than it should be.</p></div></aside>
+
+    <!-- Panel 2: Customer 360 -->
+    <aside id="customer-panel" class="panel">
+        <div id="customer-profile" class="widget"><h3 class="widget-title">Customer Profile</h3><div class="account-alerts"><span class="alert-tag vip">VIP</span><span class="alert-tag complaint">Recent Complaint</span></div><p><strong>Sarah Jenkins</strong><br><span style="color:var(--text-secondary); font-size:0.9rem;">Acct: GB26669607</span></p></div>
+        <div id="account-health" class="widget"><h3 class="widget-title">AI Account Health</h3><div class="radial-progress-widget"><div id="health-score-circle" class="progress-circle"><span id="health-score-value"></span></div><div><p style="margin:0; font-weight:500;">At Risk</p><p style="margin:0; font-size:0.9rem; color:var(--text-secondary)">High value customer with multiple recent negative interactions.</p></div></div></div>
+        <div id="services-subscribed" class="widget"><h3 class="widget-title">Subscribed Services</h3><div class="service-card"><div class="status"></div><span class="icon">🌐</span><div><strong>Fibre 2 Broadband</strong><br><small>74 Mbps Plan</small></div></div><div class="service-card"><div class="status"></div><span class="icon">📱</span><div><strong>EE Mobile</strong><br><small>Unlimited Data Plan</small></div></div></div>
+    </aside>
+
+    <!-- Panel 3: Conversation -->
+    <main id="conversation-panel" class="panel">
+        <div id="chat-log"><div class="message customer-message">Hi, my bill is way higher than it should be. This is the second issue I've had this week. What's going on?</div></div>
+        <div id="chat-input-container">
+            <div class="input-wrapper">
+                <button id="ai-draft-btn" class="secondary-btn" title="Open AI Composer">AI Draft</button>
+                <textarea id="chat-input" rows="2" placeholder="Type or use AI composer..."></textarea>
+                <button id="send-btn" class="primary-btn">Send</button>
+            </div>
+            <div id="response-grader-widget">
+                 <div class="grade-item"><span>Tone</span><div class="progress-bar-bg"><div id="grade-tone" class="progress-bar-fill"></div></div></div>
+                 <div class="grade-item"><span>Clarity</span><div class="progress-bar-bg"><div id="grade-clarity" class="progress-bar-fill"></div></div></div>
+                 <div class="grade-item"><span>Empathy</span><div class="progress-bar-bg"><div id="grade-empathy" class="progress-bar-fill"></div></div></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Panel 4: AI & Knowledge -->
+    <aside id="ai-panel" class="panel">
+        <div id="agent-assist-hub" class="widget accent">
+            <h3 class="widget-title">Agent Assist Hub</h3>
+            <div class="assist-grid">
+                <div class="assist-item" title="Next Best Action contextual guidance">
+                    <div class="assist-label">Next Action</div>
+                    <div class="assist-value" id="assist-nba">Acknowledge frustration</div>
+                </div>
+                <div class="assist-item" title="Likelihood first response resolves issue">
+                    <div class="assist-label">Resolution Odds</div>
+                    <div class="assist-value" id="assist-resolution">65% Moderate</div>
+                </div>
+                <div class="assist-item" title="Live cognitive load estimate">
+                    <div class="assist-label">Cognitive Load</div>
+                    <div class="assist-meter"><span id="assist-load-bar"></span></div>
+                </div>
+                <div class="assist-item" title="Micro sentiment trend over last messages">
+                    <div class="assist-label">Sentiment Trend</div>
+                    <div class="sparkline" id="assist-sentiment"></div>
+                </div>
+            </div>
+        </div>
+        <div id="nba-widget" class="widget highlight"><h3 class="widget-title">Next Best Action</h3><p id="nba-text">Acknowledge Frustration & Explain One-Time Charge</p><div class="widget-actions"><button id="nba-compose-btn" data-intent="BILL_HIGH" class="primary-btn">Compose with AI</button><button id="nba-refresh" class="ghost-btn" title="Recompute">↻</button></div></div>
+        <div id="resolution-predictor" class="widget"><h3 class="widget-title">Resolution Predictor</h3><div class="radial-progress-widget"><div id="fcr-score-circle" class="progress-circle" data-value="65"><span>65%</span></div><div><p class="metric-headline">Moderate Chance</p><p class="metric-sub">Multiple issues may require follow-up.</p></div></div></div>
+        <div id="cta-prompter" class="widget"><h3 class="widget-title">Live AI Prompts <small id="cta-updated" class="subtle"></small></h3><div id="cta-items-container"><div class="cta-item" data-value="I see you had a broadband issue recently, I'm sorry you've had to contact us again.">Acknowledge recent complaint</div><div class="cta-item" data-value="As a gesture of goodwill for the trouble, I've applied a £5 credit to your next bill.">Offer goodwill credit</div></div><button id="cta-refresh" class="ghost-btn small" title="Refresh Prompts">Refresh</button></div>
+        <div id="kb-widget" class="widget flex-1"><h3 class="widget-title">ServicePedia Knowledge Graph</h3><div id="knowledge-graph"></div></div>
+    </aside>
+
+    <!-- AI Composer Modal (HTML structure is static and always available) -->
+    <div id="composer-modal">
+        <div class="composer-content">
+            <h3 class="widget-title">AI Composer Workbench</h3>
+            <div id="composer-textarea" class="composer-textarea" contenteditable="true"></div>
+            <div class="composer-source"><strong>Source:</strong> <span id="composer-source-title"></span></div>
+            <div class="composer-actions">
+                <div class="refine-tools"><button id="refine-empathy">Make More Empathetic</button><button id="refine-concise">Make More Concise</button></div>
+                <div class="main-composer-actions"><button class="cancel-btn">Cancel</button><button class="insert-btn">Insert to Chat</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/athena.js"></script>
+</body>
+</html>

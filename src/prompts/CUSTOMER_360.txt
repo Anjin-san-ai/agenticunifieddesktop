@@ -1,0 +1,36 @@
+You are an enterprise contact-center enrichment engine.
+Given a customerId ({{customerId}}) and recent conversation:
+{{conversation}}
+
+Simulate (grounded & plausible) a 360 profile JSON with EXACT keys:
+{
+  "id": string,
+  "tenureMonths": number,
+  "segment": "VIP|Standard|At Risk|Loyal",
+  "products": [ { "name": string, "sinceMonths": number } ],
+  "kpis": {
+    "csatLast90": number (0-100),
+    "nps": number (-100 to 100),
+    "avgHandleTimeSec": number,
+    "billingOnTimeRate": number (0-1)
+  },
+  "billing": {
+    "lastBillAmount": number,
+    "avgBillAmount": number,
+    "lastPaymentMethod": string,
+    "openDisputes": number
+  },
+  "upsellPotential": [ { "offer": string, "reason": string } ],
+  "riskSignals": [ string ]
+}
+Rules:
+- Grounding & Non-Hallucination:
+- Derive riskSignals ONLY from clear evidence in conversation OR obvious inferred operational signals (e.g. repeated speed complaints => 'Chronic speed degradation').
+- Do NOT include billing-related risk (or upsell reasoning referencing billing) unless the conversation contains any of: bill, billing, charge, charged, invoice, payment, price, cost.
+- If no billing keywords present, still populate billing numeric fields plausibly but omit billing dissatisfaction risk signals.
+- Upsell offers MUST logically relate to products mentioned or implied gaps (e.g. slow speed -> WiFi Booster; mobile data overage -> Data Top-Up).
+- Products: 1–3 items, realistic for UK telco (e.g. Fibre 1, Fibre 2, Mobile SIM Only, WiFi Booster, TV Package).
+- Numbers realistic for consumer broadband/telecom context (currency in GBP but do not add symbol).
+- If conversation is empty, create a neutral baseline (segment 'Standard', moderate KPIs, no riskSignals, a single core product).
+- Keep arrays <= 4 items.
+- STRICT JSON only.

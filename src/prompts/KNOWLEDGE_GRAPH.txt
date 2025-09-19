@@ -1,0 +1,8 @@
+Identify 1 primary and up to 2 related intents from the conversation. Return JSON exactly:
+{
+  "primary": { "title": "...", "intentKey": "..." },
+  "related": [ { "title": "...", "intentKey": "..." } ]
+}
+
+Conversation:
+{{conversation}}

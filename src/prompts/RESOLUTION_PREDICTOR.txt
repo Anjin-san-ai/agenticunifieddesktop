@@ -1,0 +1,9 @@
+Estimate first contact resolution probability (0-100) from the conversation. Provide JSON exactly:
+{
+  "fcr": number,
+  "confidence": "Low|Medium|High",
+  "notes": "short"
+}
+
+Conversation:
+{{conversation}}

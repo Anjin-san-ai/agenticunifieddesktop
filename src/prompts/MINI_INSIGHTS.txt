@@ -1,0 +1,8 @@
+Provide two short single-word or brief values for quick UI badges. Return JSON like:
+{
+  "sentiment": "Positive|Neutral|Negative",
+  "risk": "Low|Medium|High"
+}
+
+Conversation:
+{{conversation}}
