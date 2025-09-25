@@ -36,6 +36,9 @@ let executingActionId = null;
 let liveResponseRefinedFrom = null;
 let executedActionsCache = [];
 let refreshActionsBtn = null;
+// Quick action controls
+let quickInput = null;
+let quickRunBtn = null;
 console.debug('[AI Panel] module loaded', {
 	hasAgentNetworkWidget: !!document.getElementById('agent-network'),
 	hasResultsEl: !!document.getElementById('agent-network-results'),
@@ -480,8 +483,9 @@ function getSelectedProvider(){
 async function refreshAgentActions(){
 	if (refreshActionsBtn) refreshActionsBtn.disabled = true;
 	try {
-	// Always plan with standard LLM (OpenAI) per requirement; don't send provider override here
-	const resp = await fetch('/api/v1/get-insights', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ customerId:(window.getActiveCustomerId?.() || window.activeCustomerId || 'GB00000000'), conversationHistory: window.conversationHistory||[], requestedWidgets:['AGENT_NETWORK_ACTIONS'] }) });
+		// Always plan actions with OpenAI (standard LLM) regardless of dropdown selection
+		const providerMap = { AGENT_NETWORK_ACTIONS: 'openai' };
+		const resp = await fetch('/api/v1/get-insights', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ customerId:(window.getActiveCustomerId?.() || window.activeCustomerId || 'GB00000000'), conversationHistory: window.conversationHistory||[], requestedWidgets:['AGENT_NETWORK_ACTIONS'], providerMap }) });
 		const json = await resp.json();
 		if (json.AGENT_NETWORK_ACTIONS) updateAgentNetworkActions(json.AGENT_NETWORK_ACTIONS);
 	} catch(e){ console.warn('refresh actions failed', e); }
@@ -520,6 +524,9 @@ function updateAgentNetworkActions(data){
 async function executeAgentAction(action){
 	if (executingActionId) return; // single-flight
 	executingActionId = action.id;
+	// Disable quick run while executing
+	if (quickRunBtn) quickRunBtn.disabled = true;
+	if (quickInput) quickInput.disabled = true;
 	agentNetworkResultsEl.classList.remove('hidden');
 	agentNetworkResultsEl.innerHTML = `<div style=\"display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;\">`
 		+ `<div style=\"font-size:.6rem;color:var(--text-secondary);\">Executing: ${action.title}</div>`
@@ -651,6 +658,9 @@ async function executeAgentAction(action){
 		clearInterval(timer);
 		if (progEl()) progEl().style.width = '100%';
 		executingActionId = null;
+		// Re-enable quick run controls
+		if (quickRunBtn) quickRunBtn.disabled = false;
+		if (quickInput) quickInput.disabled = false;
 		console.debug('[AI Panel] executeAgentAction finished');
 	}
 }
@@ -790,6 +800,25 @@ function init() {
 				refreshAgentActions();
 			});
 		}
+		// Quick Action wiring
+		quickInput = document.getElementById('agent-quick-input');
+		quickRunBtn = document.getElementById('agent-quick-run');
+		const runQuick = () => {
+			if (!quickInput) return;
+			const q = (quickInput.value||'').trim();
+			if (!q) return;
+			if (executingActionId) return; // avoid parallel exec
+			const id = 'manual-' + Date.now();
+			const synthetic = { id, title: 'Manual Action', rationale: 'User-entered quick action', query: q };
+			executeAgentAction(synthetic);
+		};
+		quickRunBtn?.addEventListener('click', runQuick);
+		quickInput?.addEventListener('keydown', (e)=>{
+			if (e.key === 'Enter' && !e.shiftKey) {
+				e.preventDefault();
+				runQuick();
+			}
+		});
 	}
 	// Add draft button (LIVE_RESPONSE) next to send if not present
 	if (!draftBtn) {
@@ -869,9 +898,13 @@ function init() {
 			const resp = await fetch('/api/v1/get-insights', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ customerId:(window.getActiveCustomerId?.() || window.activeCustomerId || 'GB00000000'), conversationHistory: window.conversationHistory||[], requestedWidgets:['COMPOSER_REFINE'], extraVarsMap: { COMPOSER_REFINE: { MODE: mode, DRAFT: raw } } }) });
 			const json = await resp.json();
 			const draft = json?.COMPOSER_REFINE?.draft || json?.COMPOSER_REFINE?.DRAFT || '';
-			if (draft) {
+			const rawFallback = typeof json?.COMPOSER_REFINE === 'string'
+				? json.COMPOSER_REFINE
+				: (json?.COMPOSER_REFINE?.raw || json?.COMPOSER_REFINE?.text || '');
+			const finalDraft = draft || rawFallback;
+			if (finalDraft) {
 				// Render simple markdown features for bullets/numbering
-				const html = draft
+				const html = finalDraft
 					.replace(/^#\s+(.+)$/gm, '<strong>$1</strong>')
 					.replace(/(?:^(?:-|\*)\s+.+(?:\n|$)){1,}/gm, block => {
 						const items = block.trim().split(/\n/).map(l=> l.replace(/^(?:-|\*)\s+/, ''));

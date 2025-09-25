@@ -142,6 +142,11 @@
 					</span>
 				</div>
 			</h3>
+            <!-- Quick Action input row -->
+            <div id="agent-quick-action" class="qa-row" aria-label="Run a quick agent action">
+                <input id="agent-quick-input" class="qa-input" type="text" placeholder="Type an action to run (e.g., check broadband speed, verify outage in area)" maxlength="200" />
+                <button id="agent-quick-run" class="qa-run" title="Execute with selected engine">Execute</button>
+            </div>
 			<div class="loading-block"></div>
 			<div id="agent-network-actions" class="prompt-list hidden"></div>
 			<div id="agent-network-results" class="hidden" style="margin-top:8px; font-size:.7rem;"></div>
