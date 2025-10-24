@@ -1,26 +1,23 @@
 /* Core Layout */
-:root { 
-	--bg-main:#FFFFFF; 
-	--bg-panel:#F8F9FA; 
-	--border-soft:#E9ECEF; 
-	--border-focus:#D0B0F8; 
-	--text-primary:#212529; 
-	--text-secondary:#6C757D; 
-	--bt-purple:#5500A9; 
-	--bt-pink:#E8005A; 
-	--bt-purple-light:#F4ECFC; 
-	--accent-positive:#20C997; 
-	--accent-warning:#FFC107; 
-	--accent-negative:#DC3545; 
-	--shadow-md:0 4px 12px rgba(0,0,0,0.05);
-	/* Glass tokens */
-	--glass-bg: rgba(255,255,255,.62);
-	--glass-bg-strong: rgba(255,255,255,.74);
-	--glass-border: rgba(255,255,255,.6);
-	--glass-outline: rgba(85,0,169,.15);
-	--glass-shadow: 0 8px 24px rgba(0,0,0,.08);
-	--canvas-grad: radial-gradient(1200px 800px at 10% -10%, #f7f2ff 0%, transparent 40%), radial-gradient(1000px 900px at 110% 10%, #ffe7f0 0%, transparent 45%), linear-gradient(180deg,#fbfbfd 0%, #ffffff 100%);
-	font-family: 'Inter', sans-serif; 
+:root {
+	/* ASOS-inspired neutral, minimalist palette */
+	--bg-main: #ffffff;
+	--bg-panel: #ffffff;
+	--border-soft: #e6e6e6;
+	--border-focus: rgba(0,0,0,0.08);
+	--text-primary: #111111; /* deep black for fashion-forward look */
+	--text-secondary: #6b6b6b; /* muted gray */
+	--brand-black: #000000;
+	--brand-accent: #ff3366; /* vibrant fashion accent */
+	--brand-accent-2: #00b3a6; /* secondary accent */
+	--glass-bg: rgba(255,255,255,0.98);
+	--glass-bg-strong: rgba(255,255,255,1);
+	--glass-border: rgba(0,0,0,0.06);
+	--glass-outline: rgba(0,0,0,0.06);
+	--glass-shadow: 0 8px 20px rgba(0,0,0,0.06);
+	--shadow-md: 0 6px 18px rgba(0,0,0,0.06);
+	--canvas-grad: linear-gradient(180deg,#ffffff 0%, #fbfbfb 100%);
+	font-family: 'Helvetica Neue', Inter, Arial, sans-serif;
 }
 html,body { margin:0; padding:0; min-height:100%; width:100%; overflow-x:hidden; font-family:'Inter',sans-serif; }
 /* Responsive fluid grid layout */
