@@ -38,17 +38,13 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Create deployment package
+      run: |
+        zip -r deploy.zip . -x "*.git*" "node_modules/*" ".env*" "*.log"
+
     - name: Deploy to Azure Web App using Azure CLI
       run: |
-        az webapp up \
-          --name ${{ env.AZURE_WEBAPP_NAME }} \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --runtime "NODE:20-lts" \
-          --startup-file "startup.sh"
-        
-        # Deploy the application files
-        az webapp deploy \
+        az webapp deployment source config-zip \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.AZURE_WEBAPP_NAME }} \
-          --src-path . \
-          --type zip
+          --src deploy.zip
