@@ -1,19 +1,4 @@
-<<<<<<< HEAD
-# athena
-=======
 # Athena Cognitive Desktop (Agentic Unified Desktop)
-
-A modular, real-time SPA for contact-center agents. It serves a web UI and an API that orchestrates insights with either OpenAI/Azure OpenAI or Neuro® SAN, and streams Customer 360 updates to clients via Server-Sent Events (SSE).
-
-## Quick start
-
-Prereqs:
-- Node.js 18+ and npm
-- macOS/Linux/Windows
-
-Setup and run:
-
-# Athena Cognitive Desktop (athena)
 
 A modular, real-time SPA for contact-center agents. It serves a web UI and an API that orchestrates insights with either OpenAI/Azure OpenAI or Neuro® SAN, and streams Customer 360 updates to clients via Server-Sent Events (SSE).
 
@@ -107,6 +92,20 @@ The CX demo forwards customer messages to `/api/v1/external-chat` and subscribes
 - Duplicate replies? Use `traceId` to de-duplicate on the client.
 - Not seeing `botReply`? Ensure `SUPPRESS_AUTO_BOT_REPLY` is unset/false.
 - CORS: Enabled; if embedding elsewhere, confirm allowed origins.
+
+## Deployment
+
+This application can be deployed to Azure App Service with automated CI/CD via GitHub Actions.
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Quick steps:
+1. Create Azure OpenAI resource and deploy gpt-4 model
+2. Create Azure App Service (Node.js 18+ on Linux)
+3. Configure environment variables in Azure App Settings
+4. Push code to GitHub
+5. Set up GitHub Actions with Azure publish profile
+6. Automatic deployments on every push to main
 
 ## License
 
