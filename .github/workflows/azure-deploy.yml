@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: athena-desktop    # Update this to match your App Service name
-  NODE_VERSION: '18.x'
+  AZURE_WEBAPP_NAME: athena-desktop-app
+  NODE_VERSION: '20.x'
 
 jobs:
   build-and-deploy:
