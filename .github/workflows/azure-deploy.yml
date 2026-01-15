@@ -8,6 +8,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: athena-desktop-app
+  AZURE_RESOURCE_GROUP: OpenAI_Neurokey
   NODE_VERSION: '20.x'
 
 jobs:
@@ -32,10 +33,22 @@ jobs:
         # Add build commands here if your project requires building
         echo "No build step required for this project"
 
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v3
+    - name: Azure Login
+      uses: azure/login@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: .
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy to Azure Web App using Azure CLI
+      run: |
+        az webapp up \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --runtime "NODE:20-lts" \
+          --startup-file "startup.sh"
+        
+        # Deploy the application files
+        az webapp deploy \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.AZURE_WEBAPP_NAME }} \
+          --src-path . \
+          --type zip
