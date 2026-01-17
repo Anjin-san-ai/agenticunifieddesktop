@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { fetchInsights } from '../services/llmOrchestrator.js';
+import { deriveServiceContext } from '../config/serviceClassification.js';
 import logger from '../utils/logger.js';
 
 const router = Router();
@@ -69,15 +70,11 @@ router.post('/v1/get-insights', async (req, res) => {
 			if (geoCard.region || addr.region) ctx.region = geoCard.region || addr.region;
 			if (geoCard.postalCode || addr.postcode) ctx.postalCode = geoCard.postalCode || addr.postcode;
 			if (geoCard.city || addr.city) ctx.city = geoCard.city || addr.city;
-			// Infer primary service type from products
 			const products = snap.customer360?.products || [];
 			if (products.length){
-				const names = products.map(p=>String(p.name||'').toLowerCase());
-				const svc = names.find(n=>/broadband|fiber|fibre|internet|wifi/.test(n))
-					|| names.find(n=>/mobile|cell|sim|handset/.test(n))
-					|| names.find(n=>/tv|television|set[-\s]?top/.test(n))
-					|| names[0];
-				if (svc) ctx.serviceType = geoCard.serviceType || svc;
+				const names = products.map(p=>String(p.name||''));
+				const { detailedType } = deriveServiceContext(names);
+				if (detailedType) ctx.serviceType = geoCard.serviceType || detailedType;
 			}
 			return ctx;
 		}
@@ -108,6 +105,29 @@ router.post('/v1/get-insights', async (req, res) => {
 const lastCustomer360 = new Map();
 const sseClients = new Map(); // customerId -> Set(res)
 
+function authorizeReset(req){
+	const token = process.env.RESET_TOKEN;
+	if (!token) return true; // no token configured => allow (demo/default)
+	const provided = req.get('x-reset-token');
+	return Boolean(provided) && provided === token;
+}
+
+function resetCustomerState(customerId){
+	conversationStore.delete(customerId);
+	executedActionsStore.delete(customerId);
+	lastCustomer360.delete(customerId);
+
+	const set = sseClients.get(customerId);
+	if (set) {
+		const traceId = `${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+		for (const clientRes of set) {
+			try { sendSse(clientRes, { type: 'reset', customerId, traceId, ts: Date.now() }); } catch(e) { /* ignore */ }
+			try { clientRes.end(); } catch(e) { /* ignore */ }
+		}
+	}
+	sseClients.delete(customerId);
+}
+
 function sendSse(res, data){
 	res.write(`data: ${JSON.stringify(data)}\n\n`);
 }
@@ -126,6 +146,21 @@ router.get('/v1/stream/customer-360/:id', (req, res) => {
 	const existing = lastCustomer360.get(id);
 	if (existing) sendSse(res, existing);
 	req.on('close', ()=> { sseClients.get(id)?.delete(res); });
+});
+
+// Reset server-side demo state for a single customer (conversation history, executed actions, last snapshot, SSE clients)
+// Optional protection: if RESET_TOKEN is set, require header x-reset-token to match.
+router.post('/v1/reset-customer', (req, res) => {
+	try {
+		if (!authorizeReset(req)) return res.status(401).json({ error: 'unauthorized' });
+		const { customerId } = req.body || {};
+		if (!customerId) return res.status(400).json({ error: 'customerId required' });
+		resetCustomerState(String(customerId));
+		return res.json({ ok: true, customerId });
+	} catch (err) {
+		logger.error('reset-customer error', err);
+		return res.status(500).json({ error: 'Internal' });
+	}
 });
 
 // External chat webhook: receive a new message from the customer chat app
@@ -185,9 +220,7 @@ router.post('/v1/external-chat', async (req, res) => {
 			const products = customer360.products || [];
 			// Infer service type with sensible default
 			const names = products.map(p=>String(p.name||'').toLowerCase());
-			let serviceType = names.find(n=>/fttp|fiber|fibre|broadband|internet|wifi|dsl|vdsl|adsl/.test(n)) ?
-				(names.find(n=>/fttp|fiber|fibre/.test(n)) ? 'FTTP' : (names.find(n=>/dsl|vdsl|adsl/.test(n)) ? 'DSL' : 'Broadband'))
-				: (names.find(n=>/mobile|cell|sim|handset|5g|4g/.test(n)) ? 'Mobile' : 'Broadband');
+			let { detailedType: serviceType } = deriveServiceContext(names);
 			// Seeded hash for deterministic, plausible IDs
 			const idStr = String(customerId||'');
 			let h = 0; for (let i=0;i<idStr.length;i++){ h = (h*31 + idStr.charCodeAt(i)) >>> 0; }
