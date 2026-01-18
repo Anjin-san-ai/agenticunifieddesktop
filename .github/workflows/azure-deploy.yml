@@ -40,7 +40,10 @@ jobs:
 
     - name: Create deployment package
       run: |
-        zip -r deploy.zip . -x "*.git*" "node_modules/*" ".env*" "*.log"
+        # Create zip excluding git files and logs, but including node_modules
+        # Azure will run npm install automatically if SCM_DO_BUILD_DURING_DEPLOYMENT=true
+        # Excluding node_modules here to reduce package size - Azure will install them
+        zip -r deploy.zip . -x "*.git*" "node_modules/*" ".env*" "*.log" "*.pptx" "~$*"
 
     - name: Deploy to Azure Web App using Azure CLI
       run: |

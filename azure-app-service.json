@@ -38,7 +38,7 @@
     },
     "linuxFxVersion": {
       "type": "string",
-      "defaultValue": "NODE|18-lts",
+      "defaultValue": "NODE|20-lts",
       "metadata": {
         "description": "The Runtime stack of the app"
       }
@@ -117,11 +117,15 @@
             },
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
-              "value": "~18"
+              "value": "~20"
             },
             {
               "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
               "value": "true"
+            },
+            {
+              "name": "WEBSITE_STARTUP_COMMAND",
+              "value": "./startup.sh"
             }
           ],
           "alwaysOn": true,
