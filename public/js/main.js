@@ -4,7 +4,8 @@ import * as customerPanel from './modules/customerPanel.js';
 import * as conversationPanel from './modules/conversationPanel.js';
 // Simple in-memory queue state (demo). In production fetched from backend.
 // Predefined demo customer IDs for easy simulation & consistency across apps
-const DEMO_CUSTOMER_IDS = ['GB26669607', 'GB13820473', 'GB22446688', 'GB77553311', 'GB99001234'];
+// const DEMO_CUSTOMER_IDS = ['GB26669607', 'GB13820473', 'GB22446688', 'GB77553311', 'GB99001234'];
+const DEMO_CUSTOMER_IDS = ['GB26669607', 'GB13820473', 'GB22446688', 'GB77553311', 'GB99001234', 'GB11002233', 'GB22003344', 'GB33004455', 'GB44005566', 'GB55006677', 'GB66007788', 'GB77008899', 'GB88009900', 'GB99112233', 'GB12345098'];
 const queueState = new Map(); // customerId -> { lastMessage, updatedAt }
 function generateDemoCustomerId(){
 	const n = Math.floor(Math.random()*90000000) + 10000000; // 8 digits
